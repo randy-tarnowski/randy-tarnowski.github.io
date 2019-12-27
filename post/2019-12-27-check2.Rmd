@@ -1,0 +1,36 @@
+---
+title: "#TidyTuesday: Christmas Songs (2019-52)"
+author: ''
+date: '2019-12-27'
+slug: 2019-52
+categories: []
+tags: []
+---
+
+<img src="https://github.com/randy-tarnowski/tidytuesday/raw/master/2019-12-24_ChristmasSongs/12_24.png">
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### 2019-12-24: Christmas Songs
+
+This week's #TidyTuesday challenge is examining Christmas songs that have shown up historically on the Billboard Top 100 from the 1950s to the 2010s. 
+
+See the full details [here](https://github.com/rfordatascience/tidytuesday/tree/master/data/2019/2019-12-24)
+
+> _This week's data is about Christmas songs on the hot-100 list! Clean data comes from Kaggle and originally from data.world. The lyrics come courtest of Josiah Parry's genius R package. It has several useful functions, mainly built around grabbing lyrics for specific artists, songs, or albums._
+
+```{r cars}
+summary(cars)
+```
+
+### Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

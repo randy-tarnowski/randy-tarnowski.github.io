@@ -9,6 +9,16 @@ body {
     flex-direction: column;
 }
 
+blockquote {
+  background: #f9f9f9;
+  font-style: italic;
+  font-size: 0.9em !important;
+  border-left: 20px solid #ccc;
+  margin: 1.5em 10px;
+  padding: 0.5em 10px;
+  quotes: "\201C""\201D""\2018""\2019";
+}
+
 main {
     margin: auto;
     padding: 25px;
@@ -18,8 +28,17 @@ main {
 
 img {
     max-width: 100%;
+    display: block;
+    margin: 0 auto
 }
 
+h1 {
+    color: #212121;
+    font-size: 12vh;
+}
+h4 {
+   color: red;
+}
 /* Homepage */
 
 .intro {

@@ -5,7 +5,7 @@
 
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>#TidyTuesday: Christmas Songs (2019-52)</title>
+        <title>#TidyTuesday: Sentiment Analysis of Christmas Songs (2019-52)</title>
         
         <style>
 
@@ -85,7 +85,7 @@
         <nav class="navbar navbar-default navbar-fixed-top">
             <div class="container">
                 <div class="navbar-header">
-                    <a class="navbar-brand visible-xs" href="#">#TidyTuesday: Christmas Songs (2019-52)</a>
+                    <a class="navbar-brand visible-xs" href="#">#TidyTuesday: Sentiment Analysis of Christmas Songs (2019-52)</a>
                     <button class="navbar-toggle" data-target=".navbar-collapse" data-toggle="collapse">
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
@@ -125,13 +125,21 @@
 <main>
 
     <div>
-        <h2>#TidyTuesday: Christmas Songs (2019-52)</h2>
-        <h5>December 27, 2019</h5>
+        <h2>#TidyTuesday: Sentiment Analysis of Christmas Songs (2019-52)</h2>
+        <h5>December 24, 2019</h5>
         
 
     </div>
 
     <div align="start" class="content">
+<script src="/rmarkdown-libs/htmlwidgets/htmlwidgets.js"></script>
+<script src="/rmarkdown-libs/plotly-binding/plotly.js"></script>
+<script src="/rmarkdown-libs/typedarray/typedarray.min.js"></script>
+<script src="/rmarkdown-libs/jquery/jquery.min.js"></script>
+<link href="/rmarkdown-libs/crosstalk/css/crosstalk.css" rel="stylesheet" />
+<script src="/rmarkdown-libs/crosstalk/js/crosstalk.min.js"></script>
+<link href="/rmarkdown-libs/plotly-htmlwidgets-css/plotly-htmlwidgets.css" rel="stylesheet" />
+<script src="/rmarkdown-libs/plotly-main/plotly-latest.min.js"></script>
 
 
 <p><img src="https://github.com/randy-tarnowski/tidytuesday/raw/master/2019-12-24_ChristmasSongs/12_24.png"></p>
@@ -142,20 +150,80 @@
 <blockquote>
 <p><em>This week’s data is about Christmas songs on the hot-100 list! Clean data comes from Kaggle and originally from data.world. The lyrics come courtest of Josiah Parry’s genius R package. It has several useful functions, mainly built around grabbing lyrics for specific artists, songs, or albums.</em></p>
 </blockquote>
-<pre class="r"><code>summary(cars)</code></pre>
-<pre><code>##      speed           dist       
-##  Min.   : 4.0   Min.   :  2.00  
-##  1st Qu.:12.0   1st Qu.: 26.00  
-##  Median :15.0   Median : 36.00  
-##  Mean   :15.4   Mean   : 42.98  
-##  3rd Qu.:19.0   3rd Qu.: 56.00  
-##  Max.   :25.0   Max.   :120.00</code></pre>
+<div id="step-1-collecting-all-lyrics" class="section level4">
+<h4>Step 1: Collecting all lyrics</h4>
+<p>I decided to focus on word frequencies within aggregating it, summarizing the number of occurences over the past 60+ years, as well as the lyrics.</p>
+<p>For whatever reason, the original dataset did not contain all available lyrics. I figured this was a great time to take advantage of the Genius package. If you’re interested, check out the arduous process of collecting lyrics to such hits as <em>“What Can You Get a Wookie For Christmas (When He Already Owns a Comb?)”</em> <a href="https://github.com/randy-tarnowski/tidytuesday/blob/master/2019-12-24_ChristmasSongs/FINAL_12.24.19.R"> here</a></p>
+<center>
+<img src="https://media1.giphy.com/media/5tRGwBkWx8Vt6/giphy.gif" />
+</center>
+<p><br><br></p>
 </div>
-<div id="including-plots" class="section level3">
-<h3>Including Plots</h3>
-<p>You can also embed plots, for example:</p>
+<div id="step-2-tokenize-lyrics-prep-for-sentiment-analysis" class="section level4">
+<h4>Step 2: Tokenize Lyrics, Prep for Sentiment Analysis</h4>
+<p>DETAILS ON CHOOSING BING VS.</p>
+<pre class="r"><code># set lexicon
+bing &lt;- get_sentiments(&quot;bing&quot;)
+lyrics&lt;-agg%&gt;%
+  select(-1:-4)%&gt;%
+  select(-sentiment)
+lyrics$lyrics&lt;-as.character(lyrics$lyrics)
+bing$sentiment&lt;-as.character(bing$sentiment)</code></pre>
+</div>
+<div id="step-3-conduct-sentiment-analysis" class="section level4">
+<h4>Step 3: Conduct Sentiment Analysis</h4>
+<pre class="r"><code># counting negative / positive words
+sentiment &lt;-lyrics%&gt;%
+  unnest_tokens(word, lyrics) %&gt;% 
+  anti_join(stop_words) %&gt;%
+  # join afinn score
+  inner_join(bing) %&gt;%
+  count(word, sentiment, sort = TRUE) %&gt;%
+  ungroup() %&gt;%
+  filter(word!=&quot;bum&quot;)%&gt;%
+  mutate(word=ifelse(word==&quot;bitch&quot;, &quot;b****h&quot;, word),
+         word=ifelse(word==&quot;shit&quot;, &quot;s**t&quot;, word))
+sentiment$word&lt;-stringr::str_to_sentence(sentiment$word)</code></pre>
+</div>
+<div id="step-4-visualize" class="section level4">
+<h4>Step 4: Visualize</h4>
+<pre class="r"><code># FINAL PLOT
+sentiment %&gt;%
+  group_by(sentiment) %&gt;%
+  top_n(15) %&gt;%
+  ungroup() %&gt;%
+  mutate(word = reorder(word, n)) %&gt;%
+  ggplot(aes(word, n, fill = sentiment)) +
+  geom_col(alpha = 0.8, show.legend = FALSE,  colour=&quot;white&quot;, stat=&quot;identity&quot;) +
+  facet_wrap(~sentiment, scales = &quot;free_y&quot;) +
+  labs(y = &quot;Source: Billboard Top 100 (1958-2017, A Dash of Data) \n Randy Tarnowski | @randytarnowski&quot;,
+       x = NULL,
+       title=&quot;Naughty &amp; Nice: Most Commonly Occurring Positive/Negative Words in Top 100 Christmas Songs&quot;,
+       subtitle = &quot;From the Bing/Minqing lexicon&quot;) +
+  coord_flip() +
+  theme_ipsum_rc() + 
+  scale_fill_manual(values = c(&quot;red&quot;, &quot;seagreen&quot;)) + 
+  theme(axis.text.y=element_text(size=rel(1.25))) +
+  theme(plot.subtitle = element_text(face = &quot;italic&quot;))</code></pre>
 <p><img src="/post/2019-12-27-check2_files/figure-html/pressure-1.png" width="672" /></p>
-<p>Note that the <code>echo = FALSE</code> parameter was added to the code chunk to prevent printing of the R code that generated the plot.</p>
+</div>
+<div id="step-5-further-areas-to-explore" class="section level4">
+<h4>Step 5: Further areas to explore</h4>
+<p>Now that all the lyrics are collected, there are many areas for further analysis. This includes:</p>
+<ul>
+<li><strong>Decade-based Research</strong>: Is there a difference in the overall mood of Christmas songs by decade? I’ve always loved the melancholic underpinning of a lot of Christmas songs (e.g., Charlie Brown X-Mas songs, Last Christmas, etc.).</li>
+<li><strong>Alternative Sentiments</strong>:</li>
+</ul>
+<pre class="r"><code># basic scatterplot
+ggplotly(ggplot(agg, aes(x=n, y=sentiment, label=agg$songid)) + 
+  geom_jitter(width = 10) +
+  theme_ipsum_rc() + 
+    labs(y = &quot;Sentiment (+ is positive, - is negative)&quot;,
+       x = &quot;Number of Occurences on Top 100&quot;,
+       title=&quot;Sentiment by Number of Occurences on Billboard&quot;))</code></pre>
+<div id="htmlwidget-1" style="width:672px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-1">{"x":{"data":[{"x":[0.856023303233087,-5.25036371871829,13.3113118456677,-1.14446237310767,8.37556404899806,8.40661402791739,6.65135070495307,6.40041421540082,13.9273583469912,21.1610175035894,1.20180941093713,-8.26488225348294,-2.98204099573195,2.78229160513729,2.06480099912733,7.09054535906762,2.32069342583418,-0.434295936487615,-0.150546576827765,5.38972747884691,3.61890957131982,-2.65729010198265,1.96542525477707,-7.53231693245471,8.02839375007898,0.20604170113802,0.245606148615479,-3.50854112021625,11.012806002982,-2.74040498770773,8.6702115079388,-8.78412494529039,15.4621585039422,7.16050975210965,-6.21017939969897,10.1551209045574,6.47578882798553,5.05879444349557,9.38665567524731,8.88806466571987,-6.48970585595816,12.5097675677389,8.35368955507874,-0.876216591335833,15.6049308311194,7.69867234304547,6.94304931163788,16.9734963234514,2.7373070390895,1.57646880671382,27.7415309529752,-3.52618072461337,10.8379490273073,-1.37080537434667,9.79956562165171,-0.76404734980315,0.973275191150606,11.8599469196051,23.7189257275313,-2.25881894305348,-1.6978797763586,-3.05242618918419,-1.59051799308509,12.2872036332265,5.79457520414144,14.6711884206161,0.34066179022193,4.93050807900727,4.28664922714233,-2.18635835498571,0.538059828802943,8.77168149128556,-3.00419767946005,-1.48128614481539,8.48821427114308,16.1150223165751,-2.57095908001065,-0.660403993912041],"y":[17.8686296826228,8.88078473266214,11.1529188351706,12.3041695505381,-0.0526295632123947,-0.0933759968727827,4.27848411444575,10.8025240829214,-7.02638551723212,15.834687829949,9.04604925569147,7.30252648890018,19.9492410717532,7.32615891434252,4.97059010565281,-3.64255621470511,7.9448467951268,2.68508037514985,4.23625730257481,4.25892497897148,2.05771655309945,31.2189543748274,51.3637655312195,9.8305811105296,9.90784799251705,-1.37024404555559,4.79386636205018,6.85298778265715,5.77687572035939,-1.9320769764483,9.71635700464249,14.1075020547956,2.61618085280061,13.6914255771786,-7.72820253670216,-2.2421726340428,-1.69065859783441,9.25440029203892,13.3887367004529,12.8772073818371,24.6388615582138,-0.0321881385520101,15.1772928589955,6.62235954534262,-0.000118144229054429,19.2200018500909,9.01721349228174,4.13777702134103,3.08588591963053,2.24893041811883,6.10519346576184,5.22339112218469,-0.869649573415518,9.9858329039067,12.0818555317819,-27.1919855389744,20.7552878037095,10.910027115792,11.0159956436604,17.077224737592,5.05147543735802,17.3848189966753,9.36652981601656,17.8001301232725,1.08260827194899,18.858371743001,3.04241880849004,10.3623831190169,4.88109394665807,0.23473590053618,3.33122703600675,7.33984648864716,10.061307316646,-3.2665200792253,9.89167644474655,6.10875126048923,10.676856521517,11.8461747603491],"text":["n:  2<br />sentiment:  18<br />agg$songid: A Great Big SledThe Killers Featuring Toni Halliday","n:  1<br />sentiment:   9<br />agg$songid: A Holly Jolly ChristmasBurl Ives","n: 19<br />sentiment:  11<br />agg$songid: All I Want For Christmas Is YouMariah Carey","n:  1<br />sentiment:  12<br />agg$songid: All I Want For Christmas Is YouMichael Buble","n: 11<br />sentiment:   0<br />agg$songid: AmenThe Impressions","n:  5<br />sentiment:   0<br />agg$songid: Auld Lang SyneKenny G","n:  2<br />sentiment:   4<br />agg$songid: Baby, It's Cold OutsideGlee Cast","n:  6<br />sentiment:  11<br />agg$songid: Baby's First ChristmasConnie Francis","n:  5<br />sentiment:  -7<br />agg$songid: BelieveBrooks & Dunn","n: 13<br />sentiment:  16<br />agg$songid: Better DaysGoo Goo Dolls","n:  1<br />sentiment:   9<br />agg$songid: Blue ChristmasThe Browns Featuring Jim Edward Brown","n:  1<br />sentiment:   7<br />agg$songid: Child Of GodBobby Darin","n:  3<br />sentiment:  20<br />agg$songid: Christmas Auld Lang SyneBobby Darin","n:  2<br />sentiment:   7<br />agg$songid: Christmas DreamPerry Como","n:  4<br />sentiment:   5<br />agg$songid: Christmas For CowboysJohn Denver","n:  3<br />sentiment:  -4<br />agg$songid: Christmas LightsColdplay","n:  3<br />sentiment:   8<br />agg$songid: Deck The HallsSHeDAISY","n:  6<br />sentiment:   3<br />agg$songid: Do They Know It's Christmas?Band-Aid","n:  1<br />sentiment:   4<br />agg$songid: Do They Know It's Christmas?Glee Cast","n:  1<br />sentiment:   4<br />agg$songid: Feliz NavidadJose Feliciano","n:  1<br />sentiment:   2<br />agg$songid: Grandma Got Run Over By A ReindeerElmo & Patsy","n:  1<br />sentiment:  31<br />agg$songid: Greatest Time Of YearAly & AJ","n:  2<br />sentiment:  51<br />agg$songid: Green Chri$tma$Stan Freberg","n:  2<br />sentiment:  10<br />agg$songid: Happy Xmas (War Is Over)The Fray","n:  1<br />sentiment:  10<br />agg$songid: Have Yourself A Merry Little ChristmasSam Smith","n:  3<br />sentiment:  -1<br />agg$songid: I Believe In Father ChristmasGreg Lake","n:  1<br />sentiment:   5<br />agg$songid: I'll Be Home For ChristmasKelly Clarkson","n:  2<br />sentiment:   7<br />agg$songid: I'll Be HomeThe Platters","n: 10<br />sentiment:   6<br />agg$songid: If We Make It Through DecemberMerle Haggard","n:  5<br />sentiment:  -2<br />agg$songid: It Doesn't Have To Be That WayJim Croce","n:  1<br />sentiment:  10<br />agg$songid: It's Beginning To Look A Lot Like ChristmasMichael Buble","n:  1<br />sentiment:  14<br />agg$songid: It's The Most Wonderful Time Of The YearAndy Williams","n: 20<br />sentiment:   3<br />agg$songid: Jingle Bell RockBobby Helms","n:  8<br />sentiment:  14<br />agg$songid: Jingle Bell RockBobby Rydell/Chubby Checker","n:  1<br />sentiment:  -8<br />agg$songid: Last ChristmasAriana Grande","n:  2<br />sentiment:  -2<br />agg$songid: Last ChristmasGlee Cast","n:  2<br />sentiment:  -2<br />agg$songid: Last ChristmasWham!","n:  7<br />sentiment:   9<br />agg$songid: Let It SnowBoyz II Men","n:  9<br />sentiment:  13<br />agg$songid: Little Altar BoyVic Dana","n:  4<br />sentiment:  13<br />agg$songid: Macarena ChristmasLos Del Rio","n:  3<br />sentiment:  25<br />agg$songid: Merry Christmas In The NFLWillis \"The Guard\" & Vigorish","n:  4<br />sentiment:   0<br />agg$songid: MistletoeColbie Caillat","n: 10<br />sentiment:  15<br />agg$songid: MistletoeJustin Bieber","n:  6<br />sentiment:   7<br />agg$songid: Monsters' HolidayBobby \"Boris\" Pickett And The Crypt-Kickers","n:  6<br />sentiment:   0<br />agg$songid: My Favorite ThingsHerb Alpert & The Tijuana Brass","n:  1<br />sentiment:  19<br />agg$songid: Oh Santa!Mariah Carey","n:  3<br />sentiment:   9<br />agg$songid: Please Come Home For ChristmasCharles Brown","n:  8<br />sentiment:   4<br />agg$songid: Please Come Home For ChristmasEagles","n:  7<br />sentiment:   3<br />agg$songid: Pretty PaperRoy Orbison","n:  3<br />sentiment:   2<br />agg$songid: RiverSarah McLachlan","n: 19<br />sentiment:   6<br />agg$songid: Rockin' Around The Christmas TreeBrenda Lee","n:  3<br />sentiment:   5<br />agg$songid: Run Rudolph RunChuck Berry","n:  8<br />sentiment:  -1<br />agg$songid: Same Old Lang SyneDan Fogelberg","n:  3<br />sentiment:  10<br />agg$songid: Santa Claus Is Watching YouRay Stevens","n:  5<br />sentiment:  12<br />agg$songid: Santa Tell MeAriana Grande","n:  5<br />sentiment: -27<br />agg$songid: Santa's A Fat BitchInsane Clown Posse","n:  1<br />sentiment:  21<br />agg$songid: Shake Up ChristmasTrain","n:  2<br />sentiment:  11<br />agg$songid: Silent NightBing Crosby","n: 16<br />sentiment:  11<br />agg$songid: The Chipmunk Song (Christmas Don't Be Late)David Seville And The Chipmunks","n:  2<br />sentiment:  17<br />agg$songid: The Christmas ShoesNewSong","n:  8<br />sentiment:   5<br />agg$songid: The Christmas Song (Merry Christmas To You)Nat King Cole","n:  4<br />sentiment:  17<br />agg$songid: The Greatest Gift Of AllKenny Rogers","n:  6<br />sentiment:   9<br />agg$songid: The Happy ReindeerDancer, Prancer And Nervous","n:  9<br />sentiment:  18<br />agg$songid: The Marvelous ToyThe Chad Mitchell Trio","n:  1<br />sentiment:   1<br />agg$songid: The Santa Claus BoogieThe Tractors","n:  5<br />sentiment:  19<br />agg$songid: This ChristmasChris Brown","n:  3<br />sentiment:   3<br />agg$songid: This Gift98 Degrees","n: 12<br />sentiment:  10<br />agg$songid: This One's For The ChildrenNew Kids On The Block","n:  5<br />sentiment:   5<br />agg$songid: This Time Of The YearBrook Benton","n:  3<br />sentiment:   0<br />agg$songid: Twistin' BellsSanto & Johnny","n:  3<br />sentiment:   3<br />agg$songid: Underneath The TreeKelly Clarkson","n:  1<br />sentiment:   7<br />agg$songid: Welcome ChristmasGlee Cast","n:  6<br />sentiment:  10<br />agg$songid: What Can You Get A Wookiee For Christmas (When He Already Owns A Comb?)The Star Wars Intergalactic Droid Choir & Chorale","n:  7<br />sentiment:  -3<br />agg$songid: When A Child Is BornMichael Holm","n:  1<br />sentiment:  10<br />agg$songid: Where Are You Christmas?Faith Hill","n: 14<br />sentiment:   6<br />agg$songid: White ChristmasBing Crosby","n:  2<br />sentiment:  11<br />agg$songid: White ChristmasThe Drifters Featuring Clyde McPhatter And Bill Pinkney","n:  9<br />sentiment:  12<br />agg$songid: Winter World Of LoveEngelbert Humperdinck"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,0,0,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(0,0,0,1)"}},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":95.7011207970112,"r":39.8505603985056,"b":86.8410128684101,"l":78.5388127853881},"font":{"color":"rgba(0,0,0,1)","family":"Roboto Condensed","size":15.2760481527605},"title":{"text":"<b> Sentiment by Number of Occurences on Billboard <\/b>","font":{"color":"rgba(0,0,0,1)","family":"Roboto Condensed","size":23.9103362391034},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-10.6104077402037,29.5678137478884],"tickmode":"array","ticktext":["-10","0","10","20"],"tickvals":[-10,0,10,20],"categoryorder":"array","categoryarray":["-10","0","10","20"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.81901203819012,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"Roboto Condensed","size":15.2760481527605},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(204,204,204,1)","gridwidth":0.265670402656704,"zeroline":false,"anchor":"y","title":{"text":"Number of Occurences on Top 100","font":{"color":"rgba(0,0,0,1)","family":"Roboto Condensed","size":11.9551681195517}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-31.1197730924841,55.2915530847292],"tickmode":"array","ticktext":["-25","0","25","50"],"tickvals":[-25,0,25,50],"categoryorder":"array","categoryarray":["-25","0","25","50"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.81901203819012,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"Roboto Condensed","size":15.2760481527605},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(204,204,204,1)","gridwidth":0.265670402656704,"zeroline":false,"anchor":"x","title":{"text":"Sentiment (+ is positive, - is negative)","font":{"color":"rgba(0,0,0,1)","family":"Roboto Condensed","size":11.9551681195517}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":null,"bordercolor":null,"borderwidth":0,"font":{"color":"rgba(0,0,0,1)","family":"Roboto Condensed","size":12.2208385222084}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","showSendToCloud":false},"source":"A","attrs":{"1795684e2841":{"x":{},"y":{},"label":{},"type":"scatter"}},"cur_data":"1795684e2841","visdat":{"1795684e2841":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
 </div>
 </div>
 

@@ -5,12 +5,12 @@
 
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Check!</title>
+        <title></title>
         
         <style>
 
     html body {
-        font-family: 'Raleway', sans-serif;
+        font-family: 'Nanum Gothic', sans-serif;
         background-color: white;
     }
 
@@ -28,7 +28,7 @@
 
 
 
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nanum%20Gothic">
 
 
  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css"> 
@@ -85,7 +85,7 @@
         <nav class="navbar navbar-default navbar-fixed-top">
             <div class="container">
                 <div class="navbar-header">
-                    <a class="navbar-brand visible-xs" href="#">Check!</a>
+                    <a class="navbar-brand visible-xs" href="#"></a>
                     <button class="navbar-toggle" data-target=".navbar-collapse" data-toggle="collapse">
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
@@ -100,7 +100,7 @@
                             
                                 <li><a href="/post/">Blog</a></li>
                             
-                                <li><a href="/project/">Projects</a></li>
+                                <li><a href="/project/">Portfolio</a></li>
                             
                         </ul>
                     
@@ -125,13 +125,58 @@
 <main>
 
     <div>
-        <h2>Check!</h2>
-        <h5>December 27, 2019</h5>
+        <h2></h2>
+        <h5>December 24, 2019</h5>
         
 
     </div>
 
-    <div align="start" class="content"></div>
+    <div align="start" class="content">
+<script src="/rmarkdown-libs/htmlwidgets/htmlwidgets.js"></script>
+<script src="/rmarkdown-libs/plotly-binding/plotly.js"></script>
+<script src="/rmarkdown-libs/typedarray/typedarray.min.js"></script>
+<script src="/rmarkdown-libs/jquery/jquery.min.js"></script>
+<link href="/rmarkdown-libs/crosstalk/css/crosstalk.css" rel="stylesheet" />
+<script src="/rmarkdown-libs/crosstalk/js/crosstalk.min.js"></script>
+<link href="/rmarkdown-libs/plotly-htmlwidgets-css/plotly-htmlwidgets.css" rel="stylesheet" />
+<script src="/rmarkdown-libs/plotly-main/plotly-latest.min.js"></script>
+
+
+<p><img src="https://raw.githubusercontent.com/randy-tarnowski/tidytuesday/master/2019-12-24_ChristmasSongs/12_24.png"></p>
+<div id="christmas-songs" class="section level4">
+<h4>2019-12-24: Christmas Songs</h4>
+<p>This week’s #TidyTuesday challenge is examining Christmas songs that have shown up historically on the Billboard Top 100 from the 1950s to the 2010s.</p>
+<p>See the full details <a href="%22https://github.com/rfordatascience/tidytuesday/tree/master/data/2019/2019-12-24%22">here</a>
+&gt;This week’s data is about Christmas songs on the hot-100 list! Clean data comes from Kaggle and originally from data.world. The lyrics come courtest of Josiah Parry’s genius R package. It has several useful functions, mainly built around grabbing lyrics for specific artists, songs, or albums.
+Data Source [Here:] (<a href="https://github.com/rfordatascience/tidytuesday/tree/master/data/2019/2019-12-24" class="uri">https://github.com/rfordatascience/tidytuesday/tree/master/data/2019/2019-12-24</a>)</p>
+</div>
+<div id="step-1-collecting-all-lyrics" class="section level4">
+<h4>Step 1: Collecting all lyrics</h4>
+<p>I decided to focus on word frequencies within aggregating it, summarizing the number of occurences over the past 60+ years, as well as the lyrics.</p>
+<p>For whatever reason, the original dataset did not contain all available lyrics. I figured this was a great time to take advantage of the Genius package. If you’re interested, check out the arduous process of collecting lyrics to such hits as “What Can You Get a Wookie For Christmas (When He Already Owns a Comb?)” <a href="%22https://github.com/randy-tarnowski/tidytuesday/blob/master/2019-12-24_ChristmasSongs/FINAL_12.24.19.R%22">here</a></p>
+<p><img src="https://media1.giphy.com/media/5tRGwBkWx8Vt6/giphy.gif" /></p>
+</div>
+<div id="step-2-tokenize-lyrics-prep-for-sentiment-analysis" class="section level4">
+<h4>Step 2: Tokenize Lyrics, Prep for Sentiment Analysis</h4>
+<p>DETAILS ON CHOOSING BING VS.</p>
+</div>
+<div id="step-3-conduct-sentiment-analysis" class="section level4">
+<h4>Step 3: Conduct Sentiment Analysis</h4>
+</div>
+<div id="step-4-visualization" class="section level4">
+<h4>Step 4: Visualization</h4>
+</div>
+<div id="step-5-further-analysis" class="section level4">
+<h4>Step 5: Further Analysis</h4>
+<p>Now that all the lyrics are collected, there are many areas for further analysis. This includes:</p>
+<ul>
+<li><strong>Decade-based Research:</strong> Is there a difference in the overall mood of Christmas songs by decade? I’ve always loved the melancholic underpinning of a lot of Christmas songs (e.g., Charlie Brown X-Mas songs, Last Christmas, etc.).</li>
+<li>*<strong>Alternative Sentiments:</strong></li>
+</ul>
+<p>This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <a href="http://rmarkdown.rstudio.com" class="uri">http://rmarkdown.rstudio.com</a>.</p>
+<p>When you click the <strong>Knit</strong> button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:</p>
+</div>
+</div>
 
     
     

@@ -3,7 +3,7 @@ title: "#TidyTuesday: Sentiment Analysis of Christmas
 Songs (2019-52)"
 author: ''
 date: '2019-12-24'
-slug: test2
+slug: TT_201952
 categories: []
 tags: []
 ---

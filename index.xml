@@ -49,10 +49,10 @@
     
     <item>
       <title>#TidyTuesday: Sentiment Analysis of Christmas Songs (2019-52)</title>
-      <link>/post/test2/</link>
+      <link>/post/tt_201952/</link>
       <pubDate>Tue, 24 Dec 2019 00:00:00 +0000</pubDate>
       
-      <guid>/post/test2/</guid>
+      <guid>/post/tt_201952/</guid>
       <description>2019-12-24: Christmas Songs This week’s #TidyTuesday challenge examines Christmas songs appearing on the Billboard Top 100 from the 1950s to the 2010s.
 See the full details here
  This week’s data is about Christmas songs on the hot-100 list! Clean data comes from Kaggle and originally from data.world. The lyrics come courtest of Josiah Parry’s genius R package. It has several useful functions, mainly built around grabbing lyrics for specific artists, songs, or albums.</description>

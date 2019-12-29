@@ -36,6 +36,10 @@ h1 {
     color: #212121;
     font-size: 12vh;
 }
+h2 {
+    color: "black";
+    font-size: 12vh;
+}
 h4 {
    color: red;
 }
@@ -51,7 +55,7 @@ h4 {
 }
 
 .intro > h2 {
-    color: #757575;
+    color: "black";
     font-size: 3vmin;
 }
 

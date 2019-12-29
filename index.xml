@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Randy-Tarnowski</title>
+    <title>About</title>
     <link>/</link>
-    <description>Recent content on Randy-Tarnowski</description>
+    <description>Recent content on About</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Tue, 24 Dec 2019 00:00:00 +0000</lastBuildDate>
@@ -56,6 +56,15 @@
       <description>2019-12-24: Christmas Songs This week’s #TidyTuesday challenge examines Christmas songs appearing on the Billboard Top 100 from the 1950s to the 2010s.
 See the full details here
  This week’s data is about Christmas songs on the hot-100 list! Clean data comes from Kaggle and originally from data.world. The lyrics come courtest of Josiah Parry’s genius R package. It has several useful functions, mainly built around grabbing lyrics for specific artists, songs, or albums.</description>
+    </item>
+    
+    <item>
+      <title>Hello World</title>
+      <link>/portfolio/portfolio/</link>
+      <pubDate>Mon, 19 Jun 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/portfolio/portfolio/</guid>
+      <description>Check</description>
     </item>
     
   </channel>

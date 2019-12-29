@@ -19,7 +19,17 @@
   </url>
   
   <url>
+    <loc>/tags/#tidytuesday/</loc>
+    <lastmod>2019-12-24T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/post/tt_201952/</loc>
+    <lastmod>2019-12-24T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/</loc>
     <lastmod>2019-12-24T00:00:00+00:00</lastmod>
   </url>
   
@@ -29,8 +39,18 @@
   </url>
   
   <url>
-    <loc>/</loc>
+    <loc>/tags/</loc>
     <lastmod>2019-12-24T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/portfolio/portfolio/</loc>
+    <lastmod>2017-06-19T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/portfolio/</loc>
+    <lastmod>2017-06-19T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -67,10 +87,6 @@
   
   <url>
     <loc>/tags/syntax-highlighting/</loc>
-  </url>
-  
-  <url>
-    <loc>/tags/</loc>
   </url>
   
 </urlset>
